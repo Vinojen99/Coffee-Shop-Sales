@@ -21,3 +21,14 @@ To create an intuitive dashboard that:
 3. Time-Series Analysis
    - Daily Sales Analysis: Created line charts to display daily sales for the selected month, incorporating an average sales line and highlighting exceptional sales days.
    - Sales Patterns by Hours and Days: Implemented heat maps to analyze and visualize sales patterns by hour and day, identifying peak times for sales and orders.
+4. Comparative & Trend Analysis
+   - Month-over-Month Sales Analysis: Developed visuals to track sales performance across multiple store locations, highlighting MoM differences for each store to identify growth or decline patterns.
+   - Sales by Product Category: Analyzed and visualized sales performance across different product categories, helping to identify the most profitable categories.
+   - Top Products by Sales: Displayed the top 10 best-performing products based on sales volume, providing insights into key products driving revenue.
+5. Advanced Visualization Techniques
+   - Heat Maps: Created multiple heat maps (calendar and hour-based) to provide rich, visual insights into sales performance across time.
+   - Segmented Insights: Designed segmentation for analyzing sales across different time frames (weekdays, weekends, and hours), offering deep insights into business behavior.
+6. Dashboard Interactivity & User Experience
+   - Interactive Slicers: Incorporated slicers to allow users to select specific months and interact with the data in real-time.
+   - Dynamic Tooltips: Enhanced user experience by implementing tooltips that show detailed metrics when hovering over elements, providing a more interactive and insightful dashboard.
+
