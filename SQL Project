@@ -1,54 +1,55 @@
 -- SQL Project - Data Cleaning
 
-
+-- Selects all records from the coffee_shop_sales table. 
 SELECT * FROM coffee_shop_sales; 
 
-## Changes my date from a text string to datetime format
+-- Converts the transaction_date column from a text string to DATETIME format using the specified date format.
 UPDATE coffee_shop_sales  
 SET transaction_date = STR_TO_DATE(transaction_date, '%d/%m/%Y'); 
 
-## Changes Date from column to data type Date
+-- Modifies the transaction_date column to have the DATE data type in the table structure.
 ALTER TABLE coffee_shop_sales
 MODIFY COLUMN transaction_date DATE; 
 
-## Changes my time from a string to time format
+-- Converts the transaction_time column from a string to TIME format.
 UPDATE coffee_shop_sales  
 SET transaction_time = TIME(transaction_time); 
 
-## Changes it in the table
+-- Updates the table structure to set the transaction_time column as TIME data type.
 ALTER TABLE coffee_shop_sales
 MODIFY COLUMN transaction_time TIME; 
 
-## Checking if the changes were made
+-- Verifies the structure of the coffee_shop_sales table to ensure the changes were applied.
 DESCRIBE coffee_shop_sales;
 
-## Changes column name and get rid of the excess in the front 
+-- Renames the ï»¿transaction_id column to transaction_id and sets its data type to INT, removing unwanted characters.
 ALTER TABLE coffee_shop_sales
 CHANGE COLUMN ï»¿transaction_id transaction_id INT; 
 
 
 ## Total Sales Analysis
-## Calculates the total sales from the month March
+-- Calculates the total sales for the month of March by summing up the product of unit_price and transaction_qty.
 SELECT SUM(unit_price * transaction_qty) AS Total_Sales
 FROM coffee_shop_sales 
 WHERE 
 MONTH(transaction_date) = 3; 
 
-
+-- Calculates total sales for April and May, along with the month-over-month percentage increase.
 SELECT 
-	MONTH(transaction_date) AS month, ## Gets the month from transaction_date column and renames it as month.
-    ROUND(SUM(unit_price * transaction_qty)) AS total_sales, ## Total sales column rounded
-    (SUM(unit_price * transaction_qty) - LAG(SUM(unit_price * transaction_qty), 1) ## Total sales minus The total sales from the previous month using the LAG window function
-    OVER (ORDER BY MONTH(transaction_date))) / LAG(SUM(unit_price * transaction_qty), 1) ## Entire quatntiy is divided by previous month sales
-    OVER (ORDER BY MONTH(transaction_date)) * 100 AS mom_increase_percentage -- Multiplying by 100 to get as a percentage
+	MONTH(transaction_date) AS month, -- Extracts the month from the transaction_date column and aliases it as 'month'.
+    ROUND(SUM(unit_price * transaction_qty)) AS total_sales, -- Rounds the total sales for each month.
+    (SUM(unit_price * transaction_qty) - LAG(SUM(unit_price * transaction_qty), 1) -- Computes the difference in total sales compared to the previous month.
+    OVER (ORDER BY MONTH(transaction_date))) / LAG(SUM(unit_price * transaction_qty), 1) -- Divides the difference by the previous month's sales.
+    OVER (ORDER BY MONTH(transaction_date)) * 100 AS mom_increase_percentage -- Multiplies by 100 to calculate the percentage increase.
 FROM
 	coffee_shop_sales
 WHERE 
-	MONTH(transaction_date) IN (4,5) -- for months in april and May [April][MAY] [Previous Month][Current Month]
+	MONTH(transaction_date) IN (4,5) -- Filters the data for April and May only.
 GROUP BY 
-	MONTH(transaction_date) 
+	MONTH(transaction_date) -- Groups the results by month to calculate aggregated values.
 ORDER BY 
-	MONTH(transaction_date); -- You have to do this when using these statements 
+	MONTH(transaction_date); -- Orders the results by month in ascending order.
+
 
 ## Total Orders Analysis
 SELECT COUNT(transaction_id) AS Total_orders
