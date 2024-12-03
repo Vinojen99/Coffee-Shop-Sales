@@ -52,39 +52,46 @@ ORDER BY
 
 
 ## Total Orders Analysis
+-- Counts the total number of orders (transactions) in the month of May.
 SELECT COUNT(transaction_id) AS Total_orders
 FROM coffee_shop_sales
 WHERE 
-MONTH (transaction_date) = 5; -- The total number of orders in the month of May
+MONTH (transaction_date) = 5; 
 
 ## TOTAL ORDERS KPI - MOM DIFFERENCE AND MOM GROWTH
+-- Calculates the total orders for April and May along with the month-over-month (MoM) difference and growth percentage.
 SELECT 
-    MONTH(transaction_date) AS month, -- Same thing as before just changed the sum to the count of transaction id for the number of orders. 
-    ROUND(COUNT(transaction_id)) AS total_orders, 
-    (COUNT(transaction_id) - LAG(COUNT(transaction_id), 1) 
-    OVER (ORDER BY MONTH(transaction_date))) / LAG(COUNT(transaction_id), 1) 
-    OVER (ORDER BY MONTH(transaction_date)) * 100 AS mom_increase_percentage
+    MONTH(transaction_date) AS month, -- Extracts the month from the transaction_date column and aliases it as 'month'. 
+    ROUND(COUNT(transaction_id)) AS total_orders, -- Counts the total number of orders for each month and rounds the result.
+    (COUNT(transaction_id) - LAG(COUNT(transaction_id), 1) -- Calculates the difference in total orders compared to the previous month.
+    OVER (ORDER BY MONTH(transaction_date))) / LAG(COUNT(transaction_id), 1) -- Divides the difference by the previous month's total orders.
+    OVER (ORDER BY MONTH(transaction_date)) * 100 AS mom_increase_percentage -- Multiplies by 100 to get the percentage growth.
 FROM 
     coffee_shop_sales
 WHERE 
-    MONTH(transaction_date) IN (4, 5) -- for April and May
+    MONTH(transaction_date) IN (4, 5) -- Filters the data to include transactions only from April and May.
 GROUP BY 
-    MONTH(transaction_date)
+    MONTH(transaction_date) -- Groups the results by month to calculate aggregated values for each month.
 ORDER BY 
-    MONTH(transaction_date);
+    MONTH(transaction_date); -- Orders the results by month in ascending order.
 
 ## Total Quantity Sold 
+
+-- Calculates the total quantity of items sold in the month of May.
 SELECT SUM(transaction_qty) AS Total_qantity_sold
 FROM coffee_shop_sales
 WHERE 
 MONTH (transaction_date) = 5;
 
+## 
+
+-- Calculates the total quantity sold for April and May along with the month-over-month (MoM) difference and growth percentage.
 SELECT 
-    MONTH(transaction_date) AS month, -- Same thing as before just changed the sum to the sum of quantity sold!
-    ROUND(SUM(transaction_qty)) AS total_qty_sold, 
-    (SUM(transaction_qty) - LAG(SUM(transaction_qty), 1) 
-    OVER (ORDER BY MONTH(transaction_date))) / LAG(SUM(transaction_qty), 1) 
-    OVER (ORDER BY MONTH(transaction_date)) * 100 AS mom_increase_percentage
+    MONTH(transaction_date) AS month, -- Extracts the month from the transaction_date column and aliases it as 'month'.
+    ROUND(SUM(transaction_qty)) AS total_qty_sold, -- Sums up the total quantity sold for each month and rounds the result.
+    (SUM(transaction_qty) - LAG(SUM(transaction_qty), 1) -- Calculates the difference in total quantity sold compared to the previous month.
+    OVER (ORDER BY MONTH(transaction_date))) / LAG(SUM(transaction_qty), 1) -- Divides the difference by the previous month's total quantity sold.
+    OVER (ORDER BY MONTH(transaction_date)) * 100 AS mom_increase_percentage -- Multiplies by 100 to calculate the percentage growth.
 FROM 
     coffee_shop_sales
 WHERE 
@@ -96,51 +103,55 @@ ORDER BY
 
 
 ## CALENDAR TABLE – DAILY SALES, QUANTITY and TOTAL ORDERS
-
+-- Calculates daily sales, total quantity sold, and total orders for a specific date (2023-05-18).
 SELECT
-	CONCAT(ROUND(SUM(unit_price * transaction_qty)/1000,1), 'k') AS Total_sales,
-    CONCAT(ROUND(SUM(transaction_qty)/1000,1), 'k') AS Total_Qty_Sold,
-    CONCAT(ROUND(COUNT(transaction_id)/1000,1), 'k') AS Total_orders
+	CONCAT(ROUND(SUM(unit_price * transaction_qty)/1000,1), 'k') AS Total_sales, -- Calculates total sales, divides by 1000 for scaling, rounds to one decimal, and appends 'k'.
+    CONCAT(ROUND(SUM(transaction_qty)/1000,1), 'k') AS Total_Qty_Sold, -- Calculates total quantity sold, scales, rounds, and appends 'k'.
+    CONCAT(ROUND(COUNT(transaction_id)/1000,1), 'k') AS Total_orders -- Counts total orders, scales, rounds, and appends 'k'.
 FROM coffee_shop_sales
 WHERE 
-	transaction_date = '2023-05-18';
+	transaction_date = '2023-05-18'; -- Filters the data to include only transactions from the specified date (May 18, 2023).
 
 ## SALES TREND OVER PERIOD WEEKEND/WEEKDAY
+-- Analyzes sales trends by categorizing transactions into weekends (Saturday and Sunday) and weekdays (Monday to Friday).
 -- Weekends - Sat and sun
 -- Weekdays - Mon to Fri 
 -- Sun = 1 Mon = 2 ... Sat = 7
 
 SELECT 
-	CASE WHEN dayofweek(transaction_date) IN (1,7) THEN 'Weekends'
-    ELSE 'Weekdays'-- Weekend case statement
+	CASE WHEN dayofweek(transaction_date) IN (1,7) THEN 'Weekends' -- Assigns 'Weekends' for Sundays (1) and Saturdays (7).
+    ELSE 'Weekdays'-- Weekend case statement -- Assigns 'Weekdays' for all other days (Monday to Friday).
 	END AS day_type, 
-    CONCAT(ROUND(SUM(unit_price * transaction_qty)/1000,1),'k') AS total_sales
+    CONCAT(ROUND(SUM(unit_price * transaction_qty)/1000,1),'k') AS total_sales  -- Calculates total sales for each category, scales the value, rounds to one decimal, and appends 'k'.
 FROM coffee_shop_sales
-WHERE MONTH(transaction_date) = 5 -- May Month
+WHERE MONTH(transaction_date) = 5 -- May Month -- Filters the data to include only transactions from May.
 GROUP BY 
-	CASE WHEN dayofweek(transaction_date) IN (1,7) THEN 'Weekends'
+	CASE WHEN dayofweek(transaction_date) IN (1,7) THEN 'Weekends' -- Groups data by day type (Weekends or Weekdays).
     ELSE 'Weekdays'-- Weekend case statement
 	END ;
     
 ## Sales by Store Location
+-- Analyzes total sales for each store location in May, sorted by sales in descending order.
 SELECT 
-	store_location,
-    CONCAT(ROUND(SUM(unit_price * transaction_qty)/1000,2),'k') AS total_sales
+	store_location,  -- Retrieves the location of the store
+    CONCAT(ROUND(SUM(unit_price * transaction_qty)/1000,2),'k') AS total_sales  -- Calculates total sales for each store location, scales, rounds to two decimals, and appends 'k'.
 FROM coffee_shop_sales
-WHERE MONTH(transaction_date) = 5 -- May
+WHERE MONTH(transaction_date) = 5 -- Filters the data to include only transactions from May.
 GROUP BY store_location
-ORDER BY total_sales DESC; 
+ORDER BY total_sales DESC; -- Orders the results by total sales in descending order.
+
    
 ## Sales Analysis average for a particular month
+-- Calculates the average daily sales for the month of May.
 SELECT 
-	CONCAT(ROUND(AVG(total_sales)/1000, 1),'k') AS avg_sales
+	CONCAT(ROUND(AVG(total_sales)/1000, 1),'k') AS avg_sales -- Calculates the average daily sales, scales, rounds to one decimal, and appends 'k'.
 FROM 
 	(
-    SELECT SUM(transaction_qty * unit_price) AS total_sales
+    SELECT SUM(transaction_qty * unit_price) AS total_sales  -- Calculates total sales for each day in May.
     FROM coffee_shop_sales
-    WHERE MONTH (transaction_date) = 5
-    GROUP BY transaction_date
-    ) AS Inner_query
+    WHERE MONTH (transaction_date) = 5 -- Filters the data to include only transactions from May.
+    GROUP BY transaction_date -- Groups the results by each transaction date to calculate daily sales.
+    ) AS Inner_query -- Subquery to calculate daily sales, used to compute the average.
     ;
     
 ## Daily sales for a particular month
