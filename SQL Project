@@ -26,7 +26,7 @@ DESCRIBE coffee_shop_sales;
 ALTER TABLE coffee_shop_sales
 CHANGE COLUMN ï»¿transaction_id transaction_id INT; 
 
-
+------------------------------------------------------------------------------------------------------------------------------
 ## Total Sales Analysis
 -- Calculates the total sales for the month of March by summing up the product of unit_price and transaction_qty.
 SELECT SUM(unit_price * transaction_qty) AS Total_Sales
@@ -50,15 +50,14 @@ GROUP BY
 	MONTH(transaction_date) -- Groups the results by month to calculate aggregated values.
 ORDER BY 
 	MONTH(transaction_date); -- Orders the results by month in ascending order.
-
-
+------------------------------------------------------------------------------------------------------------------------------
 ## Total Orders Analysis
 -- Counts the total number of orders (transactions) in the month of May.
 SELECT COUNT(transaction_id) AS Total_orders
 FROM coffee_shop_sales
 WHERE 
 MONTH (transaction_date) = 5; 
-
+------------------------------------------------------------------------------------------------------------------------------
 ## TOTAL ORDERS KPI - MOM DIFFERENCE AND MOM GROWTH
 -- Calculates the total orders for April and May along with the month-over-month (MoM) difference and growth percentage.
 SELECT 
@@ -75,17 +74,15 @@ GROUP BY
     MONTH(transaction_date) -- Groups the results by month to calculate aggregated values for each month.
 ORDER BY 
     MONTH(transaction_date); -- Orders the results by month in ascending order.
-
+------------------------------------------------------------------------------------------------------------------------------
 ## Total Quantity Sold 
-
 -- Calculates the total quantity of items sold in the month of May.
 SELECT SUM(transaction_qty) AS Total_qantity_sold
 FROM coffee_shop_sales
 WHERE 
 MONTH (transaction_date) = 5;
-
+------------------------------------------------------------------------------------------------------------------------------
 ## 
-
 -- Calculates the total quantity sold for April and May along with the month-over-month (MoM) difference and growth percentage.
 SELECT 
     MONTH(transaction_date) AS month, -- Extracts the month from the transaction_date column and aliases it as 'month'.
@@ -101,8 +98,7 @@ GROUP BY
     MONTH(transaction_date)
 ORDER BY 
     MONTH(transaction_date);
-
-
+------------------------------------------------------------------------------------------------------------------------------
 ## CALENDAR TABLE – DAILY SALES, QUANTITY and TOTAL ORDERS
 -- Calculates daily sales, total quantity sold, and total orders for a specific date (2023-05-18).
 SELECT
@@ -112,13 +108,9 @@ SELECT
 FROM coffee_shop_sales
 WHERE 
 	transaction_date = '2023-05-18'; -- Filters the data to include only transactions from the specified date (May 18, 2023).
-
+------------------------------------------------------------------------------------------------------------------------------
 ## SALES TREND OVER PERIOD WEEKEND/WEEKDAY
 -- Analyzes sales trends by categorizing transactions into weekends (Saturday and Sunday) and weekdays (Monday to Friday).
--- Weekends - Sat and sun
--- Weekdays - Mon to Fri 
--- Sun = 1 Mon = 2 ... Sat = 7
-
 SELECT 
 	CASE WHEN dayofweek(transaction_date) IN (1,7) THEN 'Weekends' -- Assigns 'Weekends' for Sundays (1) and Saturdays (7).
     ELSE 'Weekdays'-- Weekend case statement -- Assigns 'Weekdays' for all other days (Monday to Friday).
@@ -130,7 +122,7 @@ GROUP BY
 	CASE WHEN dayofweek(transaction_date) IN (1,7) THEN 'Weekends' -- Groups data by day type (Weekends or Weekdays).
     ELSE 'Weekdays'-- Weekend case statement
 	END ;
-    
+------------------------------------------------------------------------------------------------------------------------------    
 ## Sales by Store Location
 -- Analyzes total sales for each store location in May, sorted by sales in descending order.
 SELECT 
@@ -140,8 +132,7 @@ FROM coffee_shop_sales
 WHERE MONTH(transaction_date) = 5 -- Filters the data to include only transactions from May.
 GROUP BY store_location
 ORDER BY total_sales DESC; -- Orders the results by total sales in descending order.
-
-   
+------------------------------------------------------------------------------------------------------------------------------
 ## Sales Analysis average for a particular month
 -- Calculates the average daily sales for the month of May.
 SELECT 
@@ -154,7 +145,7 @@ FROM
     GROUP BY transaction_date -- Groups the results by each transaction date to calculate daily sales.
     ) AS Inner_query -- Subquery to calculate daily sales, used to compute the average.
     ;
-    
+------------------------------------------------------------------------------------------------------------------------------
 ## Daily sales for a particular month
 -- Calculates the total daily sales for each day in May and orders the results by day. 
 SELECT 
@@ -165,7 +156,7 @@ WHERE MONTH (transaction_date) = 5
 GROUP BY DAY(transaction_date)
 ORDER BY day(transaction_date)
 ;    
-
+------------------------------------------------------------------------------------------------------------------------------
 ## Above Average or below average Query
 -- Compares daily sales to the average sales for May and classifies each day as Above Average, Below Average, or Average.
 SELECT 
@@ -190,7 +181,7 @@ FROM (
 ) AS sales_data
 ORDER BY 
     day_of_month;
-    
+------------------------------------------------------------------------------------------------------------------------------    
 ## Sales by product Category
 -- Calculates total sales for each product category in May and orders the results by sales in descending order.
 SELECT
@@ -201,8 +192,7 @@ WHERE
 	MONTH(transaction_date) = 5  -- Filter for May
     GROUP BY product_category
     ORDER BY SUM(unit_price * transaction_qty) DESC; -- Orders the results by total sales in descending order.
-
- 
+------------------------------------------------------------------------------------------------------------------------------
 ## Top 10 Products 
 -- Retrieves the top 10 products with the highest sales in May, ordered by total sales in descending order.
 SELECT
@@ -214,7 +204,7 @@ WHERE
     GROUP BY product_type
     ORDER BY SUM(unit_price * transaction_qty) DESC
     LIMIT 10;
-   
+------------------------------------------------------------------------------------------------------------------------------
 ## Sales by days and hours 
 -- Analyzes sales on Tuesdays at 8 AM in May, providing total sales, quantity sold, and the number of orders.
 SELECT 
@@ -228,7 +218,7 @@ WHERE
 	AND HOUR(transaction_time) = 8 -- Filter for hour number 8AM
 	AND MONTH(transaction_date) = 5 -- Filter for month May
 ; 
-
+------------------------------------------------------------------------------------------------------------------------------
 ## Sales From Monday to sunday for the month of may
 -- Calculates total sales for each day of the week (Monday to Sunday) during May.
 SELECT 
@@ -256,7 +246,7 @@ GROUP BY
         WHEN DAYOFWEEK(transaction_date) = 7 THEN 'Saturday'
         ELSE 'Sunday'
     END;
-
+------------------------------------------------------------------------------------------------------------------------------
 ## Sales for the month of May 
 -- Calculates total sales for each hour of the day in May.
 SELECT 
@@ -270,4 +260,4 @@ GROUP BY
     HOUR(transaction_time)
 ORDER BY 
     HOUR(transaction_time);
-
+------------------------------------------------------------------------------------------------------------------------------
