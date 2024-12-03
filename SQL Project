@@ -155,9 +155,10 @@ FROM
     ;
     
 ## Daily sales for a particular month
+-- Calculates the total daily sales for each day in May and orders the results by day. 
 SELECT 
-	DAY(transaction_date) AS day_of_month,
-    CONCAT(ROUND(SUM(unit_price * transaction_qty)/1000,2),'k') AS total_sales
+	DAY(transaction_date) AS day_of_month, 
+    CONCAT(ROUND(SUM(unit_price * transaction_qty)/1000,2),'k') AS total_sales -- Calculates total sales for each day, scales, rounds to two decimals, and appends 'k'.
 FROM coffee_shop_sales
 WHERE MONTH (transaction_date) = 5
 GROUP BY DAY(transaction_date)
@@ -165,13 +166,14 @@ ORDER BY day(transaction_date)
 ;    
 
 ## Above Average or below average Query
+-- Compares daily sales to the average sales for May and classifies each day as Above Average, Below Average, or Average.
 SELECT 
 	day_of_month,
     CASE 
-		WHEN total_sales > avg_sales THEN 'Above Average' ## For a condition statement you must always create a case statement
-        WHEN total_sales < avg_sales THEN 'Below Average'
-        ELSE 'Average'
-	END AS sales_status,
+		WHEN total_sales > avg_sales THEN 'Above Average' -- Assigns 'Above Average' if daily sales exceed the average sales.
+        WHEN total_sales < avg_sales THEN 'Below Average' -- Assigns 'Below Average' if daily sales are below the average sales.
+        ELSE 'Average' -- Assigns 'Average' if daily sales match the average sales.
+	END AS sales_status, -- Assigns a status (Above Average, Below Average, or Average) based on the sales comparison.
     total_sales
 FROM (
     SELECT 
@@ -189,6 +191,7 @@ ORDER BY
     day_of_month;
     
 ## Sales by product Category
+-- Calculates total sales for each product category in May and orders the results by sales in descending order.
 SELECT
 	product_category,
     CONCAT(ROUND(SUM(unit_price * transaction_qty)/1000,1), 'k') AS total_sales
@@ -196,9 +199,11 @@ FROM coffee_shop_sales
 WHERE 
 	MONTH(transaction_date) = 5  -- Filter for May
     GROUP BY product_category
-    ORDER BY SUM(unit_price * transaction_qty) DESC;
+    ORDER BY SUM(unit_price * transaction_qty) DESC; -- Orders the results by total sales in descending order.
+
  
 ## Top 10 Products 
+-- Retrieves the top 10 products with the highest sales in May, ordered by total sales in descending order.
 SELECT
 	product_type,
     CONCAT(ROUND(SUM(unit_price * transaction_qty)/1000,1), 'k') AS total_sales
@@ -210,30 +215,32 @@ WHERE
     LIMIT 10;
    
 ## Sales by days and hours 
+-- Analyzes sales on Tuesdays at 8 AM in May, providing total sales, quantity sold, and the number of orders.
 SELECT 
     ROUND(SUM(unit_price * transaction_qty)) AS total_sales,
     SUM(transaction_qty) AS Total_qty_sold,
-    COUNT(*) AS Total_orders
+    COUNT(*) AS Total_orders  -- Counts the total number of orders.
 FROM 
 	coffee_shop_sales
 WHERE 
 	DAYOFWEEK(transaction_date) = 3 -- Filter for Tuesday
-	AND HOUR(transaction_time) = 8 -- Filter for hour number 8 
+	AND HOUR(transaction_time) = 8 -- Filter for hour number 8AM
 	AND MONTH(transaction_date) = 5 -- Filter for month May
 ; 
 
 ## Sales From Monday to sunday for the month of may
+-- Calculates total sales for each day of the week (Monday to Sunday) during May.
 SELECT 
     CASE 
-        WHEN DAYOFWEEK(transaction_date) = 2 THEN 'Monday'
+        WHEN DAYOFWEEK(transaction_date) = 2 THEN 'Monday' -- Assigns 'Monday' for transactions occurring on day 2 of the week.
         WHEN DAYOFWEEK(transaction_date) = 3 THEN 'Tuesday'
         WHEN DAYOFWEEK(transaction_date) = 4 THEN 'Wednesday'
         WHEN DAYOFWEEK(transaction_date) = 5 THEN 'Thursday'
         WHEN DAYOFWEEK(transaction_date) = 6 THEN 'Friday'
         WHEN DAYOFWEEK(transaction_date) = 7 THEN 'Saturday'
         ELSE 'Sunday'
-    END AS Day_of_Week,
-    ROUND(SUM(unit_price * transaction_qty)) AS Total_Sales
+    END AS Day_of_Week, -- Outputs the day of the week as a string.
+    ROUND(SUM(unit_price * transaction_qty)) AS Total_Sales -- Calculates total sales for each day of the week and rounds the result.
 FROM 
     coffee_shop_sales
 WHERE 
@@ -250,9 +257,10 @@ GROUP BY
     END;
 
 ## Sales for the month of May 
+-- Calculates total sales for each hour of the day in May.
 SELECT 
-    HOUR(transaction_time) AS Hour_of_Day,
-    ROUND(SUM(unit_price * transaction_qty)) AS Total_Sales
+    HOUR(transaction_time) AS Hour_of_Day, -- Extracts the hour from the transaction_time column and aliases it as 'Hour_of_Day'.
+    ROUND(SUM(unit_price * transaction_qty)) AS Total_Sales -- Calculates total sales for each hour and rounds the result.
 FROM 
     coffee_shop_sales
 WHERE 
