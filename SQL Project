@@ -33,7 +33,8 @@ SELECT SUM(unit_price * transaction_qty) AS Total_Sales
 FROM coffee_shop_sales 
 WHERE 
 MONTH(transaction_date) = 3; 
-
+------------------------------------------------------------------------------------------------------------------------------
+##
 -- Calculates total sales for April and May, along with the month-over-month percentage increase.
 SELECT 
 	MONTH(transaction_date) AS month, -- Extracts the month from the transaction_date column and aliases it as 'month'.
