@@ -34,7 +34,7 @@ FROM coffee_shop_sales
 WHERE 
 MONTH(transaction_date) = 3; 
 ------------------------------------------------------------------------------------------------------------------------------
-##
+## Total Sales - MOM Difference and MOM Growth
 -- Calculates total sales for April and May, along with the month-over-month percentage increase.
 SELECT 
 	MONTH(transaction_date) AS month, -- Extracts the month from the transaction_date column and aliases it as 'month'.
@@ -82,7 +82,7 @@ FROM coffee_shop_sales
 WHERE 
 MONTH (transaction_date) = 5;
 ------------------------------------------------------------------------------------------------------------------------------
-## 
+## Total Quantity Sold MOM Difference and MOM Growth
 -- Calculates the total quantity sold for April and May along with the month-over-month (MoM) difference and growth percentage.
 SELECT 
     MONTH(transaction_date) AS month, -- Extracts the month from the transaction_date column and aliases it as 'month'.
